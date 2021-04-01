@@ -1,0 +1,7 @@
+{
+    "categories": [
+        {"_id": 1, "name": "Breakfast"},
+        {"_id": 2, "name": "Lunch"},
+        {"_id": 3, "name": "Dinner"}
+    ]
+  } 
