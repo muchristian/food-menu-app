@@ -12,17 +12,7 @@ const options = [
     {value:'Lunch', label:'Lunch'},
     {value:'Dinner', label:'Dinner'}
 ]
-const CreateSchema = Yup.object().shape({
-    name: Yup.string()
-      .required('Name field is required!'),
-      price: Yup.number()
-      .required('Price field is required!'),
-    category: Yup.string()
-      .required('Category field is required!'),
-      image: Yup
-        .mixed()
-        .required("A file is required")
-  });
+
 
 function CreateMenu(props) {
     console.log(props)
@@ -38,7 +28,6 @@ function CreateMenu(props) {
             })
         } else {
             console.log('update')
-            
             const menu = props.data && props.data.find(d=> d.id === param.get('id'))
             console.log(menu)
             setValues({
@@ -46,6 +35,23 @@ function CreateMenu(props) {
             })
         }
     }, [param.get('id'), props.data])
+
+    const CreateSchema = Yup.object().shape({
+        name: Yup.string()
+          .required('Name field is required!'),
+          price: Yup.number()
+          .required('Price field is required!'),
+        category: Yup.string()
+          .required('Category field is required!'),
+          image: param.get('id') ?
+          Yup
+          .mixed()
+          :
+          Yup
+            .mixed()
+            .required("A file is required")
+      });
+
     function onSubmit(values, actions) {
             console.log(values)
             if(!param.get('id')) {
@@ -60,11 +66,12 @@ function CreateMenu(props) {
                 menuRef.push(data1);
             } else {
                 const menuRef = firebs.database().ref('Menu').child(param.get('id'))
-                storage.ref().child('images/' + values.image.name).put(values.image, { type: values.image.type });
-                const data = {
-                    ..._.omit(values, ['image']),
-                    image: values.image.name
-                }
+                values.image && storage.ref().child('images/' + values.image.name).put(values.image, { type: values.image.type });
+                    const data = {
+                        ..._.omit(values, ['image']),
+                        image: values.image ? values.image.name : props.data.find(d=> d.id === param.get('id')).image
+                    }
+                
                 menuRef.set(data);
             }
             
@@ -87,7 +94,9 @@ function CreateMenu(props) {
                                 value={props.values.name}
                                 name="name" 
                                 className="form-control" id="inputError"/>
-                                <span className="help-block">Please correct the error</span>
+                                {props.touched.name && props.errors.name ? (
+                                      <span className="help-block error">{props.errors.name}</span>
+                                    ) : null}
                             </div>
                             <div className="form-group">
                                 <label className="form-control-label">PRICE</label>
@@ -98,7 +107,9 @@ function CreateMenu(props) {
                                 value={props.values.price}
                                 name="price" 
                                 className="form-control" id="inputError"/>
-                                <span className="help-block">Please correct the error</span>
+                                {props.touched.price && props.errors.price ? (
+                                      <span className="help-block error">{props.errors.price}</span>
+                                    ) : null}
                             </div>
                             <div className="form-group">
                                 <label className="form-control-label">Category</label>
@@ -108,7 +119,9 @@ function CreateMenu(props) {
                                 onChange={value=>props.setFieldValue('category', value.value)}
                                 />
                                 
-                                <span className="help-block">Please correct the error</span>
+                                {props.touched.category && props.errors.category ? (
+                                      <span className="help-block error">{props.errors.category}</span>
+                                    ) : null}
                             </div>
                             <div className="form-group row">
                                 <label className="col-2 control-label">Image<span className="text-danger">*</span></label>
@@ -127,7 +140,7 @@ function CreateMenu(props) {
                                   </div>
                                           
                                 {props.touched.image && props.errors.image ? (
-                                      <span className="help-block">{props.errors.image}</span>
+                                      <span className="help-block error">{props.errors.image}</span>
                                     ) : null}
                                 </div>
                             </div>
@@ -137,7 +150,7 @@ function CreateMenu(props) {
                                     {/* <!-- Error Message --> */}
                                 </div>
                                 <div className="col-lg-6 login-btm login-button">
-                                    <button type="submit" className="btn btn-outline-primary">LOGIN</button>
+                                    <button type="submit" className="btn btn-outline-primary">SUBMIT</button>
                                 </div>
                             </div>
                         </form>

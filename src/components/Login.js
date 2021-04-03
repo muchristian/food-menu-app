@@ -78,7 +78,9 @@ function Login(props) {
                                     class="form-control form-control-sm" 
                                     id="exampleInputEmail1" 
                                     aria-describedby="emailHelp"/>
-                                <span class="help-block">Please correct the error</span>
+                                {props.touched.email && props.errors.email ? (
+                                      <span className="help-block error">{props.errors.email}</span>
+                                    ) : null}
                             </div>
                             <div class="form-group">
                             <label for="exampleInputPassword1">Password</label>
@@ -91,7 +93,9 @@ function Login(props) {
                                 name="password"
                                 class="form-control form-control-sm" 
                                 id="exampleInputPassword1"/>
-                                <span class="help-block">Please correct the error</span>
+                                {props.touched.password && props.errors.password ? (
+                                      <span className="help-block error">{props.errors.password}</span>
+                                    ) : null}
                             </div>
                             <button type="submit" class="btn btn-primary btn-block">Sign in</button>
                         </form>
